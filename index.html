@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive responsive weather dashboard featuring real-time temperatures, hourly and 7-day forecasts, atmospheric radar metrics, and legitimate meteorological data.">
+  <meta name="theme-color" content="#0b1329">
+  <title>WeatherSphere — Real-Time Live Weather Forecast & Atmospheric Dashboard</title>
+
+  <!-- Preconnect and Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌤️</text></svg>">
+</head>
+<body class="theme-clear">
+  <div class="bg-ambient-layer" aria-hidden="true"></div>
+
+  <div class="app-container">
+    <!-- Header / Brand Section -->
+    <header class="site-header" role="banner">
+      <div class="brand-section">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm6.36 3.64a1 1 0 0 1 0 1.41l-1.41 1.42a1 1 0 1 1-1.42-1.42l1.42-1.41a1 1 0 0 1 1.41 0zM21 11a1 1 0 1 1 0 2h-2a1 1 0 1 1 0-2h2zm-3.64 6.36a1 1 0 0 1 1.41 0l1.42 1.42a1 1 0 0 1-1.42 1.41l-1.41-1.41a1 1 0 0 1 0-1.42zM12 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1zm-6.36-1.64a1 1 0 0 1 0 1.41l-1.42 1.42a1 1 0 1 1-1.41-1.42l1.41-1.41a1 1 0 0 1 1.42 0zM5 13H3a1 1 0 1 1 0-2h2a1 1 0 1 1 0 2zm1.64-6.36a1 1 0 0 1 1.42 0l1.41 1.41a1 1 0 1 1-1.41 1.42L6.64 8.05a1 1 0 0 1 0-1.41z"/>
+            <circle cx="12" cy="12" r="5" />
+          </svg>
+        </div>
+        <h1 class="brand-title">
+          WeatherSphere
+          <span class="brand-badge" id="headerProviderBadge">Live WMO</span>
+        </h1>
+      </div>
+
+      <div class="header-actions">
+        <!-- Metric / Imperial Toggle -->
+        <div class="unit-toggle-wrapper" role="group" aria-label="Temperature unit selector">
+          <button type="button" class="unit-btn active" id="unitToggleC" data-unit="metric" aria-pressed="true">°C</button>
+          <button type="button" class="unit-btn" id="unitToggleF" data-unit="imperial" aria-pressed="false">°F</button>
+        </div>
+
+        <!-- API Configuration & Security Button -->
+        <button type="button" class="icon-action-btn" id="settingsBtn" aria-label="API Settings and Security" title="API Configuration & Security">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section" aria-label="Search city weather">
+      <div class="search-container">
+        <form class="search-form" id="searchForm" role="search" autocomplete="off">
+          <div class="search-icon-left" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <input 
+            type="text" 
+            class="search-input" 
+            id="searchInput" 
+            placeholder="Search by city (e.g., Tokyo, London, San Francisco)..." 
+            aria-label="Search city or location"
+            aria-autocomplete="list"
+            aria-controls="autocompleteList"
+            required
+          />
+
+          <div class="search-actions-right">
+            <button type="button" class="search-btn-locate" id="locateBtn" title="Use current location" aria-label="Use current location">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 2v3m0 14v3m-7-10H2m20 0h-3"></path>
+              </svg>
+              <span>Locate</span>
+            </button>
+            <button type="submit" class="search-btn-submit" id="searchBtn">Search</button>
+          </div>
+        </form>
+
+        <!-- Dropdown Suggestions -->
+        <div class="autocomplete-dropdown" id="autocompleteList" role="listbox" aria-label="City suggestions"></div>
+      </div>
+    </section>
+
+    <!-- Quick Cities / Recent Searches Bar -->
+    <nav class="quick-cities-bar" id="quickCitiesBar" aria-label="Popular and recent cities">
+      <span class="quick-label">Recent:</span>
+      <!-- Populated via JavaScript -->
+    </nav>
+
+    <!-- Status & Error Alert Banner -->
+    <aside class="alert-banner" id="alertBanner" role="alert" aria-live="polite">
+      <div class="alert-content">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="alertMessage">An unexpected error occurred.</span>
+      </div>
+      <div class="alert-actions">
+        <button type="button" class="alert-btn" id="alertRetryBtn">Retry</button>
+        <button type="button" class="alert-btn" id="alertDismissBtn" aria-label="Dismiss message">✕</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="weather-grid" id="mainWeatherContent">
+      
+      <!-- Left Column: Current Weather & Highlights -->
+      <div class="weather-main-col">
+        <!-- Hero Weather Card -->
+        <article class="hero-card" id="heroCard">
+          <div class="hero-header">
+            <div class="location-info">
+              <h2 id="heroLocationName">London</h2>
+              <div class="location-country" id="heroLocationSub">England, United Kingdom</div>
+              <div class="time-badge" id="heroLastUpdated">Updated just now</div>
+            </div>
+            <div class="provider-pill" id="heroProviderBadge">Open-Meteo</div>
+          </div>
+
+          <div class="hero-body">
+            <div class="temp-block">
+              <div class="current-temp-wrapper">
+                <span class="current-temp" id="currentTemp">--</span>
+                <span class="temp-unit-symbol" id="tempUnitSymbol">°C</span>
+              </div>
+              <div class="temp-range-badge" id="tempRangeBadge">
+                <span>H: <strong id="tempHigh">--°</strong></span>
+                <span>L: <strong id="tempLow">--°</strong></span>
+                <span>• Feels like <strong id="feelsLikeVal">--°</strong></span>
+              </div>
+            </div>
+
+            <div class="hero-weather-visual">
+              <div class="weather-icon-hero" id="heroWeatherIcon" aria-hidden="true">
+                <!-- SVG Icon inserted via JS -->
+              </div>
+              <div class="weather-condition-text" id="heroConditionText">Loading weather...</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Highlights & Weather Metrics Grid -->
+        <section class="metrics-grid" aria-label="Current atmospheric indicators">
+          <!-- Humidity -->
+          <div class="metric-card">
+            <div class="metric-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+              <span>Humidity</span>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="humidityVal">--</span>
+              <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-subtext" id="humiditySubtext">Relative air moisture</div>
+          </div>
+
+          <!-- Wind Speed -->
+          <div class="metric-card">
+            <div class="metric-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path>
+              </svg>
+              <span>Wind Speed</span>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="windSpeedVal">--</span>
+              <span class="metric-unit" id="windUnitLabel">km/h</span>
+            </div>
+            <div class="metric-subtext wind-direction-indicator">
+              <span class="compass-arrow" id="windCompassArrow" aria-hidden="true">↑</span>
+              <span id="windDirectionText">--</span>
+            </div>
+          </div>
+
+          <!-- Surface Pressure -->
+          <div class="metric-card">
+            <div class="metric-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Pressure</span>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="pressureVal">--</span>
+              <span class="metric-unit">hPa</span>
+            </div>
+            <div class="metric-subtext" id="pressureSubtext">Barometric index</div>
+          </div>
+
+          <!-- UV Index -->
+          <div class="metric-card">
+            <div class="metric-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m14.14-14.14l-1.41 1.41"></path>
+              </svg>
+              <span>UV Index</span>
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="uvIndexVal">--</span>
+              <span class="metric-unit" id="uvBadge">Moderate</span>
+            </div>
+            <div class="metric-subtext">Peak solar exposure</div>
+          </div>
+        </section>
+
+        <!-- Hourly 24-Hour Forecast -->
+        <section class="section-card" aria-label="Hourly 24-Hour Forecast">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Hourly Forecast (Next 24h)</span>
+          </div>
+          <div class="hourly-scroll-container" id="hourlyForecastContainer" role="region" aria-label="Hourly timeline">
+            <!-- Populated via JavaScript -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: 7-Day Forecast & Details -->
+      <div class="weather-side-col">
+        <section class="section-card" aria-label="7-Day Daily Forecast">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>7-Day Daily Forecast</span>
+          </div>
+          <div class="daily-list" id="dailyForecastContainer">
+            <!-- Populated via JavaScript -->
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <p>Data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo Meteorological API</a> & <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap</a>. Built with modern HTML, CSS & JavaScript.</p>
+    </footer>
+  </div>
+
+  <!-- Settings & API Key Security Modal -->
+  <dialog class="modal-dialog" id="apiModal" aria-labelledby="modalTitle">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+          </svg>
+          API Configuration & Security
+        </h2>
+        <button type="button" class="modal-close-btn" id="closeModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Weather Data Provider</label>
+        <div class="provider-options">
+          <label class="provider-radio-label selected" id="labelOpenMeteo">
+            <div class="provider-radio-header">
+              <input type="radio" name="providerSelect" id="providerOpenMeteo" value="open-meteo" checked>
+              <span>Open-Meteo</span>
+            </div>
+            <span class="provider-desc">WMO Certified, Free, No API Key Required out-of-the-box.</span>
+          </label>
+
+          <label class="provider-radio-label" id="labelOwm">
+            <div class="provider-radio-header">
+              <input type="radio" name="providerSelect" id="providerOwm" value="openweathermap">
+              <span>OpenWeatherMap</span>
+            </div>
+            <span class="provider-desc">Requires personal API key from openweathermap.org.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group" id="owmKeyGroup">
+        <label for="apiKeyInput" class="form-label">OpenWeatherMap API Key</label>
+        <div class="input-password-wrapper">
+          <input 
+            type="password" 
+            id="apiKeyInput" 
+            class="modal-input" 
+            placeholder="Enter your 32-character API key" 
+            autocomplete="off"
+          />
+          <button type="button" class="toggle-pwd-btn" id="togglePwdBtn" aria-label="Toggle password visibility">👁️</button>
+        </div>
+        <div class="modal-status-msg" id="modalKeyStatus"></div>
+      </div>
+
+      <!-- Security Guidance Notice -->
+      <div class="security-box">
+        <strong>🔒 Production Security Best Practice:</strong>
+        <p>In client-side single page apps, storing API keys in JavaScript or LocalStorage exposes them to inspection in DevTools. For production deployments, always route weather API calls through a secure backend proxy or serverless function (e.g. Next.js API route, Cloudflare Worker, or Express) where your secret key is securely held in an environment variable (`.env`). Refer to <code style="color: #6ee7b7;">API_SECURITY_GUIDE.md</code> for copy-paste backend templates.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="testKeyBtn">Test API Key</button>
+        <button type="button" class="btn-primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- JavaScript Application Entry Point -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

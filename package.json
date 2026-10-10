@@ -1,0 +1,10 @@
+{
+  "name": "weathersphere",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Modern Responsive Weather Dashboard",
+  "scripts": {
+    "start": "python -m http.server 8085",
+    "test": "node test-suite.js"
+  }
+}
